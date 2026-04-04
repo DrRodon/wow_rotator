@@ -58,6 +58,12 @@ The bot works by default using software input simulation. However, for seamless,
    - Navigate to `PythonRotator`.
    - Run `python bot.py`.
 4. **Usage**:
+   - **Draggable Window**: The bot interface can be moved anywhere on your screen (click and drag).
+   - **UI Mode (Left Arrow)**: Click the arrow on the left to cycle through 4 display modes:
+     - **Detailed**: Full spell names and keybinds.
+     - **Compact**: Smaller text list.
+     - **Minimalist**: Tiny colored dots only.
+     - **Large Icons**: Modern view with spell icons and keys.
    - **Toggle Assistant**: Press **F8** by default (Can be rebound in settings).
    - **Settings (Gear Icon)**:
      - **Interrupt Control**: Toggle automated spell interrupts.
