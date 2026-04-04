@@ -1,0 +1,21 @@
+# WoW Rotator - Addons Folder Whitelist .gitignore
+
+# 1. Ignore everything by default
+/*
+
+# 2. Allow only these specific folders and files
+!/PixelRotator/
+!/PythonRotator/
+!/README.md
+!/.gitignore
+
+# 3. Specific exclusions within PythonRotator
+/PythonRotator/icons/
+/PythonRotator/config.json
+/PythonRotator/debug_scan.png
+/PythonRotator/__pycache__/
+/PythonRotator/*.exe
+/PythonRotator/*.png
+!/PythonRotator/bot.py
+!/PythonRotator/diag_interception.py
+!/PythonRotator/rebuild_exe.bat

@@ -1,0 +1,7 @@
+## Interface: 120000
+## Title: PixelRotator
+## Notes: Core component for Just Assisted Combat integration.
+## Author: Antigravity
+## Version: 1.0
+
+Core.lua
