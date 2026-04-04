@@ -66,13 +66,33 @@ local KeyToID = {
 
 local function ParseBinding(bindingStr)
     if not bindingStr then return 0, 0 end
-    local s = bindingStr:upper()
-    local shift = (s:find("SHIFT") or s:find("S%-") or s:find("S%+")) and 1 or 0
-    local ctrl = (s:find("CTRL") or s:find("C%-") or s:find("C%+")) and 2 or 0
-    local alt = (s:find("ALT") or s:find("A%-") or s:find("A%+")) and 4 or 0
-    local baseKey = bindingStr:match("([^%-^+]+)$")
+    local s = bindingStr:upper():gsub("%s+", "") -- Usuwamy spacje i robimy duże litery
+    local shift, ctrl, alt = 0, 0, 0
+    
+    -- 1. Standardowe: SHIFT-4, S-4, S+4
+    if s:find("SHIFT") or s:find("S%-") or s:find("S%+") then shift = 1 end
+    if s:find("CTRL") or s:find("C%-") or s:find("C%+") then ctrl = 2 end
+    if s:find("ALT") or s:find("A%-") or s:find("A%+") then alt = 4 end
+    
+    -- 2. Format JustAC bez separatora: "S4", "C4", "A4"
+    if s:len() > 1 then
+        local first = s:sub(1,1)
+        local rest = s:sub(2)
+        if KeyToID[rest] then
+            if first == "S" then shift = 1
+            elseif first == "C" then ctrl = 2
+            elseif first == "A" then alt = 4
+            end
+            if shift > 0 or ctrl > 0 or alt > 0 then
+                return KeyToID[rest], (shift + ctrl + alt)
+            end
+        end
+    end
+    
+    -- 3. Fallback: to co po ostatnim - lub +
+    local baseKey = s:match("([^%-^+]+)$")
     if not baseKey then return 0, 0 end
-    local keyID = KeyToID[baseKey:upper()] or 0
+    local keyID = KeyToID[baseKey] or 0
     return keyID, (shift + ctrl + alt)
 end
 
@@ -337,7 +357,10 @@ SlashCmdList["PIXELROTATOR"] = function(msg)
             end
             local key = target.cachedHotkey or "Brak w JustAC"
             
-            print(label .. ": |cff00ffff" .. name .. "|r | Glow: " .. glowStr .. " | Vis: " .. visStr .. " | Key: |cffffff00" .. key .. "|r")
+            local kID, mMask = ParseBinding(key)
+            local idStr = "|cff00ff00ID: " .. kID .. "|r"
+            local modStr = "|cff00ff00Mod: " .. mMask .. "|r"
+            print(label .. ": |cff00ffff" .. name .. "|r | Glow: " .. glowStr .. " | Key: |cffffff00" .. key .. "|r | " .. idStr .. " | " .. modStr)
         end
 
         DebugTarget("[OFFENSE]", addon.spellIcons and addon.spellIcons[1])
