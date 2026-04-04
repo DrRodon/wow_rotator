@@ -604,22 +604,12 @@ def start_gui():
 def toggle():
     global active
     active = not active
-    if not active:
+    if active:
+        print("INFO: BOT START")
+    else:
+        print("INFO: BOT STOP")
         for key in ['shift', 'ctrl', 'alt']: pydirectinput.keyUp(key)
 
-toggle_hook = None
-def register_toggle_key(key):
-    global toggle_hook
-    if toggle_hook:
-        try: keyboard.remove_hotkey(toggle_hook)
-        except: pass
-    try:
-        toggle_hook = keyboard.add_hotkey(key, toggle)
-        print(f"INFO: Zarejestrowano klawisz Toggle: {key}")
-    except Exception as e:
-        print(f"ERROR: Nie udalo sie zarejestrowac klawisza {key}: {e}")
-
-register_toggle_key(current_toggle_key)
 threading.Thread(target=start_gui, daemon=True).start()
 threading.Thread(target=start_tray, daemon=True).start()
 
@@ -648,9 +638,18 @@ last_def_name, def_start_time = None, 0
 
 try:
     global_hp = 1.0
-    print("INFO: Rozpoczeto petle skanowania. Czekam na dane (F8 - Start/Stop).")
+    print(f"INFO: Rozpoczeto petle skanowania. Czekam na dane ({current_toggle_key.upper()} - Start/Stop).")
+    
+    key_was_pressed = False
+    
     while running:
-        # Skanujemy ZAWSZE (nawet na pauzie), aby wiedziec jaka mamy klase (DK Mode) i HP dla UI
+        # 1. Szybkie sprawdzenie czy użytkownik wcisnął klawisz Toggle
+        is_pressed = keyboard.is_pressed(current_toggle_key)
+        if is_pressed and not key_was_pressed:
+            toggle()
+        key_was_pressed = is_pressed
+
+        # 2. Skanujemy ZAWSZE (nawet na pauzie), aby wiedziec jaka mamy klase (DK Mode) i HP dla UI
         img = ImageGrab.grab(bbox=(0, 0, SCAN_WIDTH, 70))
         
         # Zapisz jeden kadr do debugowania (raz na start)
