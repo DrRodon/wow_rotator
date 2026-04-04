@@ -260,9 +260,34 @@ f:SetScript("OnUpdate", function(self, elapsed)
     local defTarget1 = IsReallyTarget(addon.defensiveIcons and addon.defensiveIcons[1], false) and addon.defensiveIcons[1]
     local intTarget = IsReallyTarget(addon.interruptIcon, false) and addon.interruptIcon
     
+    -- NOWOŚĆ: Sprawdzanie COOLDOWNU dla Przerwań
+    local intReady = true
+    if intTarget and intTarget.spellID then
+        local startTime, duration = 0, 0
+        if C_Spell and C_Spell.GetSpellCooldown then
+            local info = C_Spell.GetSpellCooldown(intTarget.spellID)
+            if info then
+                startTime = info.startTime
+                duration = info.duration
+            end
+        elseif GetSpellCooldown then
+            startTime, duration = GetSpellCooldown(intTarget.spellID)
+        end
+        
+        -- Jeśli spell jest na CD (startTime > 0 i duration > 1.5s aby pominąć GCD)
+        if startTime and startTime > 0 and duration and duration > 1.5 then
+            intReady = false
+        end
+    end
+
     RenderAction(offTarget, offRow1, offRow2, 1)
     RenderAction(defTarget1, defRow1, defRow2, 2)
-    RenderAction(intTarget, intRow1, intRow2, 5)
+    
+    if intTarget and intReady then
+        RenderAction(intTarget, intRow1, intRow2, 5)
+    else
+        RenderAction(nil, intRow1, intRow2, 5)
+    end
 end)
 
 -- Komenda Debugująca
