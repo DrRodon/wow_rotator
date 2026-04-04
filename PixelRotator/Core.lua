@@ -261,28 +261,33 @@ f:SetScript("OnUpdate", function(self, elapsed)
     local function IsActionReady(target)
         if not target then return false end
         local id = target.spellID or target.itemID
-        if not id then return true end -- Bez ID nie sprawdzimy CD, ufamy JustAC
+        if not id then return true end
         
-        local startTime, duration = 0, 0
         if target.spellID then
+            local info = nil
             if C_Spell and C_Spell.GetSpellCooldown then
-                local info = C_Spell.GetSpellCooldown(id)
-                if info then startTime, duration = info.startTime, info.duration end
-            elseif GetSpellCooldown then
-                startTime, duration = GetSpellCooldown(id)
+                info = C_Spell.GetSpellCooldown(id)
+            end
+            
+            if info and type(info) == "table" then
+                -- FLAGI LOGICZNE (Safe check): Prawdziwy cooldown jest wtedy, gdy spell jest w trakcie (isActive)
+                -- i NIE jest to tylko Global Cooldown (not isOnGCD).
+                if info.isActive and not info.isOnGCD then
+                    return false -- Na CD (nie-GCD)
+                end
+            else
+                -- Fallback dla starszych wersji gry (nie-Retail)
+                local startTime, duration = GetSpellCooldown(id)
+                if startTime and startTime > 0 and duration and duration > 1.5 then
+                    return false
+                end
             end
         elseif target.itemID then
-            if C_Container and C_Container.GetItemCooldown then
-                startTime, duration = C_Container.GetItemCooldown(id)
-            elseif GetItemCooldown then
-                startTime, duration = GetItemCooldown(id)
+            -- Dla itemów, jeśli JustAC pokazał ikonę, a my nie możemy bezpiecznie sprawdzić CD (SecretNumbers),
+            -- to ufamy że JustAC wie co robi lub sprawdzamy wizualny element cooldownu.
+            if target.cooldown and target.cooldown:IsShown() then
+                return false
             end
-        end
-        
-        -- FILTR GCD: Jeśli CD trwa dłużej niż 1.5s, znaczy że to prawdziwy cooldown umiejętności
-        -- Jeśli CD jest <= 1.5s, uznajemy że to GCD i pozwalamy botowi wysłać klawisz (kolejkowanie w WoW)
-        if startTime and startTime > 0 and duration and duration > 1.5 then
-            return false
         end
         return true
     end
