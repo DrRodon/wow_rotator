@@ -553,6 +553,7 @@ def start_gui():
                     history_labels[i].config(text=txt)
                 else: history_labels[i].config(text="")
         elif ui_state == 3:
+            # Tryma 3: Icon View (z automatycznym pobieraniem ikon)
             if spell_history:
                 curr = spell_history[0]
                 _, icons = get_spell_data_api(curr["id"])
