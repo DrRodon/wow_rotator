@@ -604,14 +604,25 @@ def start_gui():
 def toggle():
     global active
     active = not active
-    if active:
-        print("INFO: BOT START")
-    else:
-        print("INFO: BOT STOP")
+    if not active:
         for key in ['shift', 'ctrl', 'alt']: pydirectinput.keyUp(key)
+
+def listen_for_toggle():
+    global running
+    last_pressed = False
+    while running:
+        # Sprawdzaj co 10ms - ultra responsywnosc
+        is_p = keyboard.is_pressed(current_toggle_key)
+        if is_p and not last_pressed:
+            toggle()
+            last_pressed = True
+        elif not is_p:
+            last_pressed = False
+        time.sleep(0.01)
 
 threading.Thread(target=start_gui, daemon=True).start()
 threading.Thread(target=start_tray, daemon=True).start()
+threading.Thread(target=listen_for_toggle, daemon=True).start()
 
 def execute_action(action, prefix_label):
     global last_action, spell_history
@@ -638,18 +649,10 @@ last_def_name, def_start_time = None, 0
 
 try:
     global_hp = 1.0
-    print(f"INFO: Rozpoczeto petle skanowania. Czekam na dane ({current_toggle_key.upper()} - Start/Stop).")
-    
-    key_was_pressed = False
+    print(f"INFO: Rozpoczeto petle skanowania. Czekam na dane (Klawisz: {current_toggle_key.upper()})")
     
     while running:
-        # 1. Szybkie sprawdzenie czy użytkownik wcisnął klawisz Toggle
-        is_pressed = keyboard.is_pressed(current_toggle_key)
-        if is_pressed and not key_was_pressed:
-            toggle()
-        key_was_pressed = is_pressed
-
-        # 2. Skanujemy ZAWSZE (nawet na pauzie), aby wiedziec jaka mamy klase (DK Mode) i HP dla UI
+        # GŁÓWNA PĘTLA ROBOCZA
         img = ImageGrab.grab(bbox=(0, 0, SCAN_WIDTH, 70))
         
         # Zapisz jeden kadr do debugowania (raz na start)
