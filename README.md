@@ -58,8 +58,12 @@ The bot works by default using software input simulation. However, for seamless,
    - Navigate to `PythonRotator`.
    - Run `python bot.py`.
 4. **Usage**:
-   - **F8**: Toggle Rotator ON/OFF.
-   - **Gear Icon**: Configure Healing (Death Strike) and Interrupts.
+   - **Toggle Assistant**: Press **F8** by default (Can be rebound in settings).
+   - **Settings (Gear Icon)**:
+     - **Interrupt Control**: Toggle automated spell interrupts.
+     - **Defensive Rotation**: Enable/Disable automated defensive ability usage.
+     - **Smart Healing (DK Only)**: Set precise health thresholds for automatic **Death Strike** execution.
+     - **Hotkeys**: Rebind the global toggle hotkey to any key.
 
 ## Disclaimer
 Use at your own risk. Automating gameplay may violate Blizzard's Terms of Service. This project is for educational purposes.
