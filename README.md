@@ -19,24 +19,40 @@ A Python application that:
 2. Processes rotation logic via JustAC recommendations.
 3. Sends inputs through the `Interception` driver.
 
-## Setup Instructions
+## Prerequisites
 
-### Prerequisites
-1. **Interception Driver**: Required for hardware-level input. [Download and install the Interception driver](https://github.com/oblitum/Interception).
-2. **Python 3.10+**: Ensure Python is in your PATH.
-3. **Required Addons**: `JustAssistedCombat` (JAC) for rotation suggestions.
+### 1. Python (Required)
+The core of the logic depends on Python.
+- **Download**: [Download Python 3.10+](https://www.python.org/downloads/)
+- **Installation**: During install, **MUST** check the box "**Add Python to PATH**".
+- **Dependencies**: Open a terminal in the `PythonRotator` folder and run:
+  ```bash
+  pip install opencv-python numpy Pillow pywin32
+  ```
 
-### Installation
-1. Copy the `PixelRotator` folder to your `World of Warcraft/_retail_/Interface/Addons` directory.
-2. Launch WoW and enable the addon (`/reload`).
-3. Set your Game Resolution to Windowed Mode (Maximized).
+### 2. JustAssistedCombat (JAC) (Required)
+The bot uses JAC to get combat recommendations.
+- **Download**: Find it on **CurseForge** or GitHub.
+- **Configuration**: Ensure the "Show Icons" option is enabled in JAC settings so the `PixelRotator` addon can "read" them.
 
-### Running the Bot
-1. Open a terminal in the `PythonRotator` directory.
-2. Run `pip install -r requirements.txt` (if applicable) or ensure you have `opencv-python`, `numpy`, `PIL`, and `pywin32`.
-3. Launch the bot: `python bot.py`.
-4. **F8**: Toggle the rotation assistant ON/OFF.
-5. **Gear Icon**: Access advanced settings (Healing thresholds, interrupts).
+### 3. Interception Driver (Optional - Highly Recommended)
+The bot works by default using software input simulation. However, for seamless, conflict-free automation (allowing you to use your keyboard normally while the bot is active):
+- **Download**: [Interception Driver](https://github.com/oblitum/Interception)
+- **Installation**: Run `install-interception.exe /install` as administrator and **restart your PC**.
+- The bot will automatically detect the driver on launch and enable **Hardware Mode**.
+
+## Installation & Launch
+
+1. **Addon Setup**: Copy the `PixelRotator` folder to your `World of Warcraft/_retail_/Interface/Addons` directory.
+2. **Game Settings**: 
+   - Set Display Mode to **Windowed Mode (Maximized)**.
+   - Type `/reload` in-game to load the addon.
+3. **Launch the Bot**:
+   - Navigate to `PythonRotator`.
+   - Run `python bot.py`.
+4. **Usage**:
+   - **F8**: Toggle Rotator ON/OFF.
+   - **Gear Icon**: Configure Healing (Death Strike) and Interrupts.
 
 ## Disclaimer
 Use at your own risk. Automating gameplay may violate Blizzard's Terms of Service. This project is for educational purposes.
