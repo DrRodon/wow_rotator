@@ -33,7 +33,14 @@ The core of the logic depends on Python.
 ### 2. JustAssistedCombat (JAC) (Required)
 The bot uses JAC to get combat recommendations.
 - **Download**: Find it on **CurseForge** or GitHub.
-- **Configuration**: Ensure the "Show Icons" option is enabled in JAC settings so the `PixelRotator` addon can "read" them.
+- **Configuration**: Ensure the "Show Icons" option is enabled in JAC settings. 
+- **Crucial Settings** (under `Standard Queue` -> `Defensive Display`):
+  - **Show Defensive Icons**: Enabled
+  - **Defensive Visibility**: `When Health Low`
+  - **Max Icons**: `1`
+  - **Icon Scale**: `0.5`
+  - **Highlight Mode**: `All Glows`
+  - **Show Health Bars**: Enabled
 
 ### 3. Interception Driver (Optional - Highly Recommended)
 The bot works by default using software input simulation. However, for seamless, conflict-free automation (allowing you to use your keyboard normally while the bot is active):
