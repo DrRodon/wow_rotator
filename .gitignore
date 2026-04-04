@@ -15,7 +15,7 @@
 /PythonRotator/debug_scan.png
 /PythonRotator/__pycache__/
 /PythonRotator/*.exe
+/PythonRotator/*.bat
 /PythonRotator/*.png
 !/PythonRotator/bot.py
 !/PythonRotator/diag_interception.py
-!/PythonRotator/rebuild_exe.bat
