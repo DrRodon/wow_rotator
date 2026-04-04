@@ -258,36 +258,47 @@ f:SetScript("OnUpdate", function(self, elapsed)
 
     local offTarget = IsReallyTarget(addon.spellIcons and addon.spellIcons[1], true) and addon.spellIcons[1]
     local defTarget1 = IsReallyTarget(addon.defensiveIcons and addon.defensiveIcons[1], false) and addon.defensiveIcons[1]
-    local intTarget = IsReallyTarget(addon.interruptIcon, false) and addon.interruptIcon
-    
-    -- NOWOŚĆ: Sprawdzanie COOLDOWNU dla Przerwań
-    local intReady = true
-    if intTarget and intTarget.spellID then
+    local function IsActionReady(target)
+        if not target then return false end
+        local id = target.spellID or target.itemID
+        if not id then return true end -- Bez ID nie sprawdzimy CD, ufamy JustAC
+        
         local startTime, duration = 0, 0
-        if C_Spell and C_Spell.GetSpellCooldown then
-            local info = C_Spell.GetSpellCooldown(intTarget.spellID)
-            if info then
-                startTime = info.startTime
-                duration = info.duration
+        if target.spellID then
+            if C_Spell and C_Spell.GetSpellCooldown then
+                local info = C_Spell.GetSpellCooldown(id)
+                if info then startTime, duration = info.startTime, info.duration end
+            elseif GetSpellCooldown then
+                startTime, duration = GetSpellCooldown(id)
             end
-        elseif GetSpellCooldown then
-            startTime, duration = GetSpellCooldown(intTarget.spellID)
+        elseif target.itemID then
+            if C_Container and C_Container.GetItemCooldown then
+                startTime, duration = C_Container.GetItemCooldown(id)
+            elseif GetItemCooldown then
+                startTime, duration = GetItemCooldown(id)
+            end
         end
         
-        -- Jeśli spell jest na CD (startTime > 0 i duration > 1.5s aby pominąć GCD)
+        -- FILTR GCD: Jeśli CD trwa dłużej niż 1.5s, znaczy że to prawdziwy cooldown umiejętności
+        -- Jeśli CD jest <= 1.5s, uznajemy że to GCD i pozwalamy botowi wysłać klawisz (kolejkowanie w WoW)
         if startTime and startTime > 0 and duration and duration > 1.5 then
-            intReady = false
+            return false
         end
+        return true
     end
+
+    local offTarget = IsReallyTarget(addon.spellIcons and addon.spellIcons[1], true) and addon.spellIcons[1]
+    local defTarget1 = IsReallyTarget(addon.defensiveIcons and addon.defensiveIcons[1], false) and addon.defensiveIcons[1]
+    local intTarget = IsReallyTarget(addon.interruptIcon, false) and addon.interruptIcon
+    
+    -- Filtrujemy akcje przez sprawdzanie Cooldownu (CD)
+    if not IsActionReady(offTarget) then offTarget = nil end
+    if not IsActionReady(defTarget1) then defTarget1 = nil end
+    if not IsActionReady(intTarget) then intTarget = nil end
 
     RenderAction(offTarget, offRow1, offRow2, 1)
     RenderAction(defTarget1, defRow1, defRow2, 2)
-    
-    if intTarget and intReady then
-        RenderAction(intTarget, intRow1, intRow2, 5)
-    else
-        RenderAction(nil, intRow1, intRow2, 5)
-    end
+    RenderAction(intTarget, intRow1, intRow2, 5)
 end)
 
 -- Komenda Debugująca

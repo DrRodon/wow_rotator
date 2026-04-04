@@ -645,7 +645,9 @@ def execute_action(action, prefix_label):
     input_manager.press(kn, bm)
     time.sleep(random.uniform(0.01, 0.03))
 
-last_def_name, def_start_time = None, 0
+# Inicjalizacja stanu
+last_action = ""
+spell_history = []
 
 try:
     global_hp = 1.0
@@ -695,19 +697,12 @@ try:
                 elif a["act_type"] == 2: defa.append(a)
                 elif a["act_type"] == 1: offa = a
 
-            # Wykonanie akcji tylko gdy aktywny
-            if interrupts_enabled and inta: execute_action(inta, "")
-            
-            if def_actions := (defa if defensives_enabled else []):
-                curr_dn = def_actions[0]["spell_name"]
-                if curr_dn != last_def_name:
-                    last_def_name, def_start_time = curr_dn, time.time()
-                if time.time() - def_start_time > 0.8 and offa:
-                    execute_action(offa, ""); def_start_time = time.time()
-                else:
-                    execute_action(def_actions[0], "")
+            # Wykonanie akcji: Priorytet Interrupt > Defensive > Offensive
+            if interrupts_enabled and inta:
+                execute_action(inta, "")
+            elif defensives_enabled and defa:
+                execute_action(defa[0], "")
             elif offa:
-                last_def_name = None
                 execute_action(offa, "")
         else:
             # Oszczędność CPU na pauzie
