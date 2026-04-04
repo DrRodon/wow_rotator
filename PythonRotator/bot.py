@@ -54,8 +54,8 @@ def save_config(x, y, def_en, int_en, heal_en, heal_thr, ui_state, toggle_key):
             }, f)
     except: pass
 
-SCAN_WIDTH = 1000 # Zwiększono zasięg skanowania (DPI / 4K)
-debug_snapshot_done = False
+# SCAN_WIDTH to zasięg skanowania poziomego
+SCAN_WIDTH = 1000 
 
 ID_TO_KEY = {
     1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 
@@ -657,13 +657,6 @@ try:
         # GŁÓWNA PĘTLA ROBOCZA
         img = ImageGrab.grab(bbox=(0, 0, SCAN_WIDTH, 70))
         
-        # Zapisz jeden kadr do debugowania (raz na start)
-        if not debug_snapshot_done:
-            try:
-                img.save("debug_scan.png")
-                print("INFO: Zapisano zrzut ekranu do debug_scan.png dla diagnostyki.")
-                debug_snapshot_done = True
-            except: pass
 
         found_actions, seen_uids = [], set()
         for y in range(70): 
