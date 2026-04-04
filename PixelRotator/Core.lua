@@ -66,10 +66,11 @@ local KeyToID = {
 
 local function ParseBinding(bindingStr)
     if not bindingStr then return 0, 0 end
-    local shift = string.find(bindingStr, "SHIFT%-") and 1 or 0
-    local ctrl = string.find(bindingStr, "CTRL%-") and 2 or 0
-    local alt = string.find(bindingStr, "ALT%-") and 4 or 0
-    local baseKey = bindingStr:match("([^-]+)$")
+    local s = bindingStr:upper()
+    local shift = (s:find("SHIFT") or s:find("S%-") or s:find("S%+")) and 1 or 0
+    local ctrl = (s:find("CTRL") or s:find("C%-") or s:find("C%+")) and 2 or 0
+    local alt = (s:find("ALT") or s:find("A%-") or s:find("A%+")) and 4 or 0
+    local baseKey = bindingStr:match("([^%-^+]+)$")
     if not baseKey then return 0, 0 end
     local keyID = KeyToID[baseKey:upper()] or 0
     return keyID, (shift + ctrl + alt)
