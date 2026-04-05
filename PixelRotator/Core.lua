@@ -163,10 +163,10 @@ local function RenderAction(target, rowA, rowB, actionType)
             
             if spellName and tostring(spellName):lower():gsub("%s+", "") == targetMatch then
                 local bCmd = "ACTIONBUTTON" .. slot
-                if slot >= 37 and slot <= 48 then bCmd = "MULTIACTIONBAR1BUTTON" .. (slot-36)
+                if slot >= 37 and slot <= 48 then bCmd = "MULTIACTIONBAR4BUTTON" .. (slot-36)
                 elseif slot >= 49 and slot <= 60 then bCmd = "MULTIACTIONBAR2BUTTON" .. (slot-48)
                 elseif slot >= 25 and slot <= 36 then bCmd = "MULTIACTIONBAR3BUTTON" .. (slot-24)
-                elseif slot >= 61 and slot <= 72 then bCmd = "MULTIACTIONBAR4BUTTON" .. (slot-60)
+                elseif slot >= 61 and slot <= 72 then bCmd = "MULTIACTIONBAR1BUTTON" .. (slot-60)
                 end
                 
                 local key1 = GetBindingKey(bCmd)
@@ -174,9 +174,10 @@ local function RenderAction(target, rowA, rowB, actionType)
                     local kID, mMask = ParseBinding(key1)
                     if kID > 0 then
                         local score = 1
-                        if key1:find("SHIFT-") then score = 100
-                        elseif key1:find("CTRL-") then score = 10
-                        elseif key1:find("ALT-") then score = 5 end
+                        if not key1:find("[%-%+]") then score = 100 -- Prefer plain keys
+                        elseif key1:find("ALT") then score = 50
+                        elseif key1:find("CTRL") then score = 20
+                        elseif key1:find("SHIFT") then score = 10 end
                         if score > bestScore then
                             bestScore, bestSlotKey, bestSlotMod = score, kID, mMask
                         end
@@ -261,9 +262,6 @@ f:SetScript("OnUpdate", function(self, elapsed)
         if isOffensive then return true end
         
         local hasGlow = frame.hasAssistedGlow or frame.hasDefensiveGlow or frame.hasInterruptGlow or frame.defShowGlow or frame.hasProcGlow
-        
-        local hasGlow = frame.hasAssistedGlow or frame.hasDefensiveGlow or frame.hasInterruptGlow or frame.defShowGlow or frame.hasProcGlow
-        
         if hasGlow then return true end
         
         return false
